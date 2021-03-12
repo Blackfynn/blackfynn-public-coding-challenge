@@ -64,7 +64,7 @@ Should yield output of:
 
 ```
 {
-    "participant_ID": 1569698
+    "participantId": 1569698
     "age": "20",
     "zipCode": "10000",
     "enrollementDate": "2019",
@@ -92,10 +92,6 @@ REST service framework (derived from
 https://developer.lightbend.com/guides/akka-http-quickstart-scala/). 
 Please provide your solution as a ZIP file, or as a repository from any of the 
 major source control sites, but please keep repos containing your solution private.  
-Trying to be respectful of your time, ee expect that an qualified candidate should 
-be able to complete this exercies within~ 2 hours. With
-that in mind, we'd prefer to see a more well-formed solution that only
-handles some of the rules above than one that handles all of them but takes
-shortcuts. The final submission should be aligned with what you might submit as a PR 
-within your team for reviews. Definitely reach out if you have any questions or need 
-anyclarifications. 
+The final submission should be aligned with what you might submit as a PR within your 
+team for reviews. Definitely reach out if you have any questions or need any 
+clarifications. 
