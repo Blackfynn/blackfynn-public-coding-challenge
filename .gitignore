@@ -16,3 +16,6 @@ project/metals.sbt
 .scala_dependencies
 .worksheet
 .idea/
+.bloop
+.metals/
+.bsp/
