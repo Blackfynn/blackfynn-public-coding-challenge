@@ -122,7 +122,12 @@ To start the [Scala Build Tool (SBT)](https://www.scala-sbt.org/) run
 Once in the SBT console, compile the project with the `compile` command. Run
 tests with the `test` command.
 
-You can start the REST API with the `reStart` command. Stop the server with the
-`reStop` command.
+Start the REST API with the `reStart` command. Once the server is running you can make requests to it:
+
+```
+curl http://127.0.0.1:8080/participants
+```
+
+Stop the server with the `reStop` command.
 
 Stop SBT with `Ctrl-C` .

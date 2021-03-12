@@ -12,8 +12,10 @@ class ParticipantRoutes(participantDatabase: ParticipantDatabase)(implicit
 ) {
 
   import system.executionContext
+
+  // Import JSON serialization / deserialization for Participant objects
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-  import JsonFormats._
+  import com.blackfynn.JsonFormats._
 
   val participantRoutes: Route =
     pathPrefix("participants") {
@@ -26,7 +28,7 @@ class ParticipantRoutes(participantDatabase: ParticipantDatabase)(implicit
             },
             // POST a new participant
             post {
-              entity(as[Participant]) { participant =>
+              entity(as[Participant]) { participant: Participant =>
                 onSuccess(participantDatabase.createParticipant(participant)) {
                   performed =>
                     complete((StatusCodes.Created, performed))
@@ -36,7 +38,7 @@ class ParticipantRoutes(participantDatabase: ParticipantDatabase)(implicit
           )
         },
         // GET participant by name
-        path(Segment) { name =>
+        path(Segment) { name: String =>
           concat(
             get {
               rejectEmptyResponse {
