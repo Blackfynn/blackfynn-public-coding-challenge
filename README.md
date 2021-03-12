@@ -34,7 +34,12 @@ records. Specifically, we're looking for the following:
   codes and their populations is included in CSV format.  Note that these are
   Zip Code Tabulation Areas (ZCTAs) which exclude certain ZIP codes which are
   not useful for population data (i.e. some office buildings have their own ZIP
-  codes due to mail volume, but are not considered for census tabulation).
+  codes due to mail volume, but are not considered for census tabulation). ZIP 
+  codes and associated cencus information are found in: 
+
+```
+/src/main/resources/population_by_zcta_2010.csv 
+```
 
 * Enrollement dates should be set to the year only.
 
