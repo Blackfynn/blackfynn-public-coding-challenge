@@ -10,7 +10,7 @@ Additionally, to limit risk, when working with data internally, we follow the
 minimum necessary standard for accessing data containing Protected Health
 Information (PHI). To overcome these risks, we remove PHI, currently a set of 18
 types of data including biometrics such as fingerprints, birth dates, telephone
-numbers, social security numbers,etc. through a process known as 'Safe Harbor'
+numbers, social security numbers, etc. through a process known as 'Safe Harbor'
 de-identification.
 
 For this challenge, we're going to write a real-time de-identification
@@ -96,7 +96,7 @@ ample amount of information, please see the below set of requirements.
 
 ## Logistics
 
-Because we are primarily a scala developement group and understandingthe
+Because we are primarily a Scala developement group and understanding the
 potential overhead to set up the service, database, etc., we've provided a base
 REST service framework (derived from
 https://developer.lightbend.com/guides/akka-http-quickstart-scala/).  Please
@@ -108,6 +108,10 @@ any clarifications.
 
 
 ## Compiling and Testing
+
+You will need a Java installation on your computer. Run `java -version` to check
+if Java is installed. See
+https://java.com/en/download/help/download_options.html for download options.
 
 To start the [Scala Build Tool (SBT)](https://www.scala-sbt.org/) run
 
