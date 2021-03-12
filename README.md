@@ -69,7 +69,7 @@ Should yield output of:
 
 ```
 {
-    "participantId": 1569698
+    "participantId": "1569698"
     "age": "20",
     "zipCode": "10000",
     "enrollementDate": "2019",
