@@ -14,7 +14,7 @@ object QuickstartApp {
 
   private def startHttpServer(
       routes: Route,
-      userDatabase: UserDatabase
+      participantDatabase: ParticipantDatabase
   )(implicit
       system: ActorSystem[_]
   ): Unit = {
@@ -23,7 +23,7 @@ object QuickstartApp {
 
     // Bootstrap database and server
     val futureBinding = for {
-      _ <- userDatabase.createTables
+      _ <- participantDatabase.createTables
       binding <- Http().newServerAt("localhost", 8080).bind(routes)
     } yield binding
 
@@ -44,9 +44,11 @@ object QuickstartApp {
   def main(args: Array[String]): Unit = {
 
     val rootBehavior = Behaviors.setup[Nothing] { context =>
-      val userDatabase = new UserDatabase()(context.system)
-      val routes = new UserRoutes(userDatabase)(context.system)
-      startHttpServer(routes.userRoutes, userDatabase)(context.system)
+      val participantDatabase = new ParticipantDatabase()(context.system)
+      val routes = new ParticipantRoutes(participantDatabase)(context.system)
+      startHttpServer(routes.participantRoutes, participantDatabase)(
+        context.system
+      )
 
       Behaviors.empty
     }

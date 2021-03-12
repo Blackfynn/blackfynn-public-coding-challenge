@@ -9,63 +9,65 @@ import akka.actor.typed.ActorSystem
 import scala.concurrent.Future
 
 //#import-json-formats
-//#user-routes-class
-class UserRoutes(userDatabase: UserDatabase)(implicit
+//#participant-routes-class
+class ParticipantRoutes(participantDatabase: ParticipantDatabase)(implicit
     val system: ActorSystem[_]
 ) {
 
   import system.executionContext
 
-  //#user-routes-class
+  //#participant-routes-class
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import JsonFormats._
   //#import-json-formats
 
   //#all-routes
-  //#users-get-post
-  //#users-get-delete
-  val userRoutes: Route =
-    pathPrefix("users") {
+  //#participants-get-post
+  //#participants-get-delete
+  val participantRoutes: Route =
+    pathPrefix("participants") {
       concat(
-        //#users-get-delete
+        //#participants-get-delete
         pathEnd {
           concat(
             get {
-              complete(userDatabase.getUsers)
+              complete(participantDatabase.getParticipants)
             },
             post {
-              entity(as[User]) { user =>
-                onSuccess(userDatabase.createUser(user)) { performed =>
-                  complete((StatusCodes.Created, performed))
+              entity(as[Participant]) { participant =>
+                onSuccess(participantDatabase.createParticipant(participant)) {
+                  performed =>
+                    complete((StatusCodes.Created, performed))
                 }
               }
             }
           )
         },
-        //#users-get-delete
-        //#users-get-post
+        //#participants-get-delete
+        //#participants-get-post
         path(Segment) { name =>
           concat(
             get {
-              //#retrieve-user-info
+              //#retrieve-participant-info
               rejectEmptyResponse {
-                onSuccess(userDatabase.getUser(name)) { maybeUser =>
-                  complete(maybeUser)
+                onSuccess(participantDatabase.getParticipant(name)) {
+                  maybeParticipant =>
+                    complete(maybeParticipant)
                 }
               }
-              //#retrieve-user-info
+              //#retrieve-participant-info
             }
             // delete {
-            //   //#users-delete-logic
-            //   onSuccess(deleteUser(name)) { performed =>
+            //   //#participants-delete-logic
+            //   onSuccess(deleteParticipant(name)) { performed =>
             //     complete((StatusCodes.OK, performed))
             //   }
-            //   //#users-delete-logic
+            //   //#participants-delete-logic
             // }
           )
         }
       )
-      //#users-get-delete
+      //#participants-get-delete
     }
   //#all-routes
 }

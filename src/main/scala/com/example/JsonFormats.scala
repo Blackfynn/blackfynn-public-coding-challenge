@@ -18,8 +18,8 @@ object JsonFormats {
       }
   }
 
-  // derive encoders / decoders for user objects
-  implicit val userJsonFormat = jsonFormat3(User)
-  implicit val usersJsonFormat = jsonFormat1(Users)
+  // derive encoders / decoders for participant objects
+  implicit val participantJsonFormat = jsonFormat5(Participant)
+  implicit val participantsJsonFormat = jsonFormat1(Participants)
   implicit val actionPerformedJsonFormat = jsonFormat1(ActionPerformed)
 }

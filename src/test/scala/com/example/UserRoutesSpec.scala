@@ -1,6 +1,6 @@
 package com.blackfynn
 
-//#user-routes-spec
+//#participant-routes-spec
 //#test-top
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.http.scaladsl.marshalling.Marshal
@@ -14,8 +14,11 @@ import java.time.LocalDate
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-
-class UserRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with ScalatestRouteTest {
+class ParticipantRoutesSpec
+    extends AnyWordSpec
+    with Matchers
+    with ScalaFutures
+    with ScalatestRouteTest {
 
   // the Akka HTTP route testkit does not yet support a typed actor system (https://github.com/akka/akka-http/issues/2036)
   // so we have to adapt for now
@@ -24,20 +27,20 @@ class UserRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with Sc
   override def createActorSystem(): akka.actor.ActorSystem =
     testKit.system.classicSystem
 
-  // Here we need to implement all the abstract members of UserRoutes.
-  val userDatabase = new UserDatabase()
-  Await.result(userDatabase.createTables, 5.seconds)
+  // Here we need to implement all the abstract members of ParticipantRoutes.
+  val participantDatabase = new ParticipantDatabase()
+  Await.result(participantDatabase.createTables, 5.seconds)
 
-  lazy val routes = new UserRoutes(userDatabase).userRoutes
+  lazy val routes = new ParticipantRoutes(participantDatabase).participantRoutes
 
   // use the json formats to marshal and unmarshall objects in the test
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import JsonFormats._
 
-  "UserRoutes" should {
-    "return no users if no present (GET /users)" in {
+  "ParticipantRoutes" should {
+    "return no participants if no present (GET /participants)" in {
       // note that there's no need for the host part in the uri:
-      val request = HttpRequest(uri = "/users")
+      val request = HttpRequest(uri = "/participants")
 
       request ~> routes ~> check {
         status should ===(StatusCodes.OK)
@@ -46,17 +49,24 @@ class UserRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with Sc
         contentType should ===(ContentTypes.`application/json`)
 
         // and no entries should be in the list:
-        entityAs[String] should ===("""{"users":[]}""")
+        entityAs[String] should ===("""{"participants":[]}""")
       }
     }
 
-    "be able to add users (POST /users)" in {
-      val user = User(42, "Kapi", LocalDate.of(1989, 4, 23))
+    "be able to add participants (POST /participants)" in {
+      val participant = Participant(
+        name = "Kapi",
+        birthDate = LocalDate.of(2000, 1, 1),
+        zipCode = "10013",
+        enrollmentDate = LocalDate.of(2019, 3, 12),
+        notes =
+          "Participant with ssn 123-45-6789 previously presented under different ssn"
+      )
 
-      val userEntity = Marshal(user).to[MessageEntity].futureValue // futureValue is from ScalaFutures
+      val participantEntity = Marshal(participant).to[MessageEntity].futureValue
 
       // using the RequestBuilding DSL:
-      val request = Post("/users").withEntity(userEntity)
+      val request = Post("/participants").withEntity(participantEntity)
 
       request ~> routes ~> check {
         status should ===(StatusCodes.Created)
@@ -65,24 +75,9 @@ class UserRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with Sc
         contentType should ===(ContentTypes.`application/json`)
 
         // and we know what message we're expecting back:
-        entityAs[String] should ===("""{"description":"User Kapi created."}""")
+        entityAs[String] should ===("""{"description":"Participant created"}""")
       }
     }
-
-    // "be able to remove users (DELETE /users)" in {
-    //   // user the RequestBuilding DSL provided by ScalatestRouteSpec:
-    //   val request = Delete(uri = "/users/Kapi")
-
-    //   request ~> routes ~> check {
-    //     status should ===(StatusCodes.OK)
-
-    //     // we expect the response to be json:
-    //     contentType should ===(ContentTypes.`application/json`)
-
-    //     // and no entries should be in the list:
-    //     entityAs[String] should ===("""{"description":"User Kapi deleted."}""")
-    //   }
-    // }
   }
 
 }

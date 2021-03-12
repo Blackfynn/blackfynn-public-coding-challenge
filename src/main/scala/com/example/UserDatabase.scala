@@ -9,11 +9,17 @@ import java.time.LocalDate
 import slick.jdbc.{GetResult, SetParameter, PositionedParameters}
 import java.time.format.DateTimeFormatter
 
-final case class User(id: Int, name: String, dateOfBirth: LocalDate)
-final case class Users(users: immutable.Seq[User])
+final case class Participant(
+    name: String,
+    birthDate: LocalDate,
+    zipCode: String,
+    enrollmentDate: LocalDate,
+    notes: String
+)
+final case class Participants(participants: immutable.Seq[Participant])
 final case class ActionPerformed(description: String)
 
-class UserDatabase()(implicit val system: ActorSystem[_]) {
+class ParticipantDatabase()(implicit val system: ActorSystem[_]) {
   import system.executionContext
 
   // New SQLite database
@@ -22,46 +28,50 @@ class UserDatabase()(implicit val system: ActorSystem[_]) {
   // Recreate SQLite tables
   def createTables(): Future[Unit] = {
     val query = for {
-      _ <- sqlu"drop table if exists users"
-      _ <- sqlu"""create table users (
-        id integer primary key,
+      _ <- sqlu"drop table if exists participants"
+      _ <- sqlu"""create table participants (
         name text not null,
-        date_of_birth date not null
+        birth_date date not null,
+        zip_code text not null,
+        enrollment_date date not null,
+        notes text
       )"""
     } yield ()
 
     db.run(query)
   }
 
-  def createUser(user: User): Future[ActionPerformed] =
+  def createParticipant(participant: Participant): Future[ActionPerformed] =
     db.run(
       sqlu"""
-          insert into users (id, name, date_of_birth)
-          values (${user.id}, ${user.name}, ${user.dateOfBirth})
+          insert into participants (name, birth_date, zip_code, enrollment_date, notes)
+          values (${participant.name}, ${participant.birthDate}, ${participant.zipCode}, ${participant.enrollmentDate}, ${participant.notes})
           """
-    ).map(_ => ActionPerformed(s"User ${user.name} created."))
+    ).map(_ => ActionPerformed(s"Participant created"))
 
-  def getUsers(): Future[Users] =
+  def getParticipants(): Future[Participants] =
     db.run(
-      sql"select id, name, date_of_birth from users"
-        .as[(Int, String, LocalDate)]
+      sql"select name, birth_date, zip_code, enrollment_date, notes from participants"
+        .as[(String, LocalDate, String, LocalDate, String)]
         .map(rows =>
           rows.map {
-            case (id, name, dateOfBirth) => User(id, name, dateOfBirth)
+            case (name, birthDate, zipCode, enrollmentDate, notes) =>
+              Participant(name, birthDate, zipCode, enrollmentDate, notes)
           }
         )
-    ).map(Users(_))
+    ).map(Participants(_))
 
-  def getUser(name: String): Future[Option[User]] =
+  def getParticipant(name: String): Future[Option[Participant]] =
     db.run(
       sql"""
-         select id, name, date_of_birth from users
+         select name, birth_date, zip_code, enrollment_date, notes
          where name = $name limit 1
          """
-        .as[(Int, String, LocalDate)]
+        .as[(String, LocalDate, String, LocalDate, String)]
         .map(rows =>
           rows.map {
-            case (id, name, dateOfBirth) => User(id, name, dateOfBirth)
+            case (name, birthDate, zipCode, enrollmentDate, notes) =>
+              Participant(name, birthDate, zipCode, enrollmentDate, notes)
           }
         )
     ).map(_.headOption)
