@@ -1,7 +1,5 @@
 package com.blackfynn
 
-//#participant-routes-spec
-//#test-top
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
@@ -20,14 +18,12 @@ class ParticipantRoutesSpec
     with ScalaFutures
     with ScalatestRouteTest {
 
-  // the Akka HTTP route testkit does not yet support a typed actor system (https://github.com/akka/akka-http/issues/2036)
-  // so we have to adapt for now
   lazy val testKit = ActorTestKit()
   implicit def typedSystem = testKit.system
   override def createActorSystem(): akka.actor.ActorSystem =
     testKit.system.classicSystem
 
-  // Here we need to implement all the abstract members of ParticipantRoutes.
+  // Bootstrap participant database
   val participantDatabase = new ParticipantDatabase()
   Await.result(participantDatabase.createTables, 5.seconds)
 
@@ -49,7 +45,7 @@ class ParticipantRoutesSpec
         contentType should ===(ContentTypes.`application/json`)
 
         // and no entries should be in the list:
-        entityAs[String] should ===("""{"participants":[]}""")
+        entityAs[Participants] should ===(Participants(List.empty))
       }
     }
 

@@ -28,14 +28,16 @@ class ParticipantDatabase()(implicit val system: ActorSystem[_]) {
   // Recreate SQLite tables
   def createTables(): Future[Unit] = {
     val query = for {
-      _ <- sqlu"drop table if exists participants"
-      _ <- sqlu"""create table participants (
-        name text not null,
-        birth_date date not null,
-        zip_code text not null,
-        enrollment_date date not null,
-        notes text
-      )"""
+      _ <- sqlu"DROP TABLE IF EXISTS participants"
+      _ <- sqlu"""
+               CREATE TABLE participants (
+                 name TEXT NOT NULL,
+                 birth_date DATE NOT NULL,
+                 zip_code TEXT NOT NULL,
+                 enrollment_date DATE NOT NULL,
+                 notes TEXT
+               )
+               """
     } yield ()
 
     db.run(query)
@@ -44,14 +46,20 @@ class ParticipantDatabase()(implicit val system: ActorSystem[_]) {
   def createParticipant(participant: Participant): Future[ActionPerformed] =
     db.run(
       sqlu"""
-          insert into participants (name, birth_date, zip_code, enrollment_date, notes)
-          values (${participant.name}, ${participant.birthDate}, ${participant.zipCode}, ${participant.enrollmentDate}, ${participant.notes})
+          INSERT INTO participants (name, birth_date, zip_code, enrollment_date, notes)
+          VALUES (
+            ${participant.name},
+            ${participant.birthDate},
+            ${participant.zipCode},
+            ${participant.enrollmentDate},
+            ${participant.notes}
+          )
           """
     ).map(_ => ActionPerformed(s"Participant created"))
 
   def getParticipants(): Future[Participants] =
     db.run(
-      sql"select name, birth_date, zip_code, enrollment_date, notes from participants"
+      sql"SELECT name, birth_date, zip_code, enrollment_date, notes FROM participants"
         .as[(String, LocalDate, String, LocalDate, String)]
         .map(rows =>
           rows.map {
@@ -64,8 +72,10 @@ class ParticipantDatabase()(implicit val system: ActorSystem[_]) {
   def getParticipant(name: String): Future[Option[Participant]] =
     db.run(
       sql"""
-         select name, birth_date, zip_code, enrollment_date, notes
-         where name = $name limit 1
+         SELECT name, birth_date, zip_code, enrollment_date, notes
+         FROM participants
+         WHERE name = $name
+         LIMIT 1
          """
         .as[(String, LocalDate, String, LocalDate, String)]
         .map(rows =>
@@ -79,7 +89,6 @@ class ParticipantDatabase()(implicit val system: ActorSystem[_]) {
   /*
    * Custom serialization / deserialization of LocalDate from SQLite
    */
-
   implicit val setLocalDateParameter: SetParameter[LocalDate] =
     new SetParameter[LocalDate] {
       def apply(d: LocalDate, pp: PositionedParameters) =
