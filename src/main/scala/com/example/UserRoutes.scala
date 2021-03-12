@@ -1,4 +1,4 @@
-package com.example
+package com.blackfynn
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.StatusCodes

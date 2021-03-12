@@ -1,4 +1,4 @@
-package com.example
+package com.blackfynn
 
 import java.time.LocalDate
 import spray.json._

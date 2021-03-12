@@ -1,4 +1,4 @@
-package com.example
+package com.blackfynn
 
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
