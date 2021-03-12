@@ -8,7 +8,7 @@ One regulation falling under HIPAA is the Privacy Rule, which, among other
 things, governs what health data can be shared and under what circumstances. 
 Additionally, to limit risk, when working with data internally, we follow the 
 minimum necessary standard for accessing data containing Protected Health 
-Information (PHI). To overcome these risks, we currently remove PHI, currently 
+Information (PHI). To overcome these risks, we remove PHI, currently 
 a set of 18 types of data including biometrics such as fingerprints, birth dates, 
 telephone numbers, social security numbers,etc. through a process known as 
 'Safe Harbor' de-identification.
@@ -58,6 +58,7 @@ A sample input of:
 
 ```
 {
+    "name": "jane smith"
     "birthDate": "2000-01-01",
     "zipCode": "10013",
     "enrollementDate": "2019-03-12",
@@ -81,10 +82,10 @@ Should yield output of:
 To ensure a complete understanding of the scope of this exercies and to provide ample 
 amount of information, please see the below set of requirements.
 
+ * Endpoint that ingests participant data into a in-memeory store (SQL-lite used in 
+ pre-defined framework) and returns newly minted participant id.
  * Method to de-identify data, removing PHI and appending a participant internal ID 
  (7 digit integer))
- * Endpoint that ingests participant data into a in-memeory store (SQL-lite used in 
- pre-defined framework)
  * Endpoint that hands retrieval of de-identified participant information based on
  internal ID 
  * Endpoint that retrieves all de-identified records in array
