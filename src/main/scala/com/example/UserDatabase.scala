@@ -45,8 +45,8 @@ class UserDatabase()(implicit val system: ActorSystem[_]) {
     db.run(
       sql"select id, name, date_of_birth from users"
         .as[(Int, String, LocalDate)]
-        .map(
-          _.map {
+        .map(rows =>
+          rows.map {
             case (id, name, dateOfBirth) => User(id, name, dateOfBirth)
           }
         )
@@ -59,8 +59,8 @@ class UserDatabase()(implicit val system: ActorSystem[_]) {
          where name = $name limit 1
          """
         .as[(Int, String, LocalDate)]
-        .map(
-          _.map {
+        .map(rows =>
+          rows.map {
             case (id, name, dateOfBirth) => User(id, name, dateOfBirth)
           }
         )

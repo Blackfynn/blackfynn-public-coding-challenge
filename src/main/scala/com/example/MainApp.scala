@@ -10,9 +10,8 @@ import scala.util.Success
 
 import scala.concurrent.Future
 
-//#main-class
 object QuickstartApp {
-  //#start-http-server
+
   private def startHttpServer(
       routes: Route,
       userDatabase: UserDatabase
@@ -22,6 +21,7 @@ object QuickstartApp {
     // Akka HTTP still needs a classic ActorSystem to start
     import system.executionContext
 
+    // Bootstrap database and server
     val futureBinding = for {
       _ <- userDatabase.createTables
       binding <- Http().newServerAt("localhost", 8080).bind(routes)
@@ -41,9 +41,8 @@ object QuickstartApp {
     }
   }
 
-  //#start-http-server
   def main(args: Array[String]): Unit = {
-    //#server-bootstrapping
+
     val rootBehavior = Behaviors.setup[Nothing] { context =>
       val userDatabase = new UserDatabase()(context.system)
       val routes = new UserRoutes(userDatabase)(context.system)
@@ -51,8 +50,6 @@ object QuickstartApp {
 
       Behaviors.empty
     }
-    val system = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
-    //#server-bootstrapping
+    val system = ActorSystem[Nothing](rootBehavior, "BlackfynnChallengeApp")
   }
 }
-//#main-class
